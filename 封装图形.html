@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>画出圆柱体</title>
+    <style type="text/css">
+        body {
+            background: #eeeeee;
+        }
+        #controls {
+            position: absolute;
+            left: 25px;
+            top: 25px;
+        }
+        #canvas {
+            background: #ffffff;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-top: 10px;
+            -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            -moz-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            -box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+</body>
+<script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var message = document.getElementById("message");
+    var mousedown = {};
+    var loc=null;
+    var dragging = false;
+    var drawingSurfacsImageData = null;
+    var list = [];
+    var lyc=new LYC();
+
+    function LYC(x,y){
+      this.x=x;
+      this.y=y;
+
+    }
+
+    //输入坐标是e.clientX，e.clientY，得到返回值是canvas的位置坐标
+    function windowToCanvas(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x : x - bbox.left * (canvas.width / bbox.width),
+            y : y - bbox.top * (canvas.height / bbox.width)
+        };
+    }
+
+    //复制保存当前全部的canvas上的数据
+    function saveDrawingSurface() {
+        drawingSurfacsImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+    //恢复canvas的数据，主要用来显示最新的线段，擦除原来的线段
+    function restoreDrawingSurface() {
+        context.putImageData(drawingSurfacsImageData,
+            0, 0, 0, 0, canvas.width, canvas.height
+        );
+    }
+
+    function drawRubberbandShape(x1,y1,x2,y2,r) {
+
+        context.beginPath();
+        context.arc(x1, y1,r,0,2*Math.PI, false);
+        context.closePath();
+        context.stroke();
+
+        context.beginPath();
+        context.arc(x2, y2,r,0,2*Math.PI, false);
+        context.closePath();
+        context.stroke();
+
+
+      if(y2==y1){
+        context.beginPath();
+        context.moveTo(x1,y1-r);
+        context.lineTo(x2,y2-r);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(x1,y1+r);
+        context.lineTo(x2,y2+r);
+        context.stroke();
+      }else{
+        var tan=(x2-x1)/(y2-y1);
+        var cos=Math.sqrt(1/(1+tan*tan));
+        var sin=tan*cos;
+
+        //画出切线
+        context.beginPath();
+        context.moveTo(x1+r*cos,y1-r*sin);
+        context.lineTo(x2+r*cos,y2-r*sin);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(x1-r*cos,y1+r*sin);
+        context.lineTo(x2-r*cos,y2+r*sin);
+        context.stroke();
+      }
+
+    }
+    drawRubberbandShape(200,200,50,50,5);
+
+
+    //当按下鼠标时
+    canvas.onmouse = function(e) {
+        if (event.button==0){
+            e.preventDefault();
+            loc = windowToCanvas(e.clientX, e.clientY);
+            //context.save();
+            saveDrawingSurface();
+            mousedown.x = loc.x;
+            mousedown.y = loc.y;
+            //mousedown1.x= loc.x;
+            //mousedown1.y = loc.y;
+            dragging = true;
+        }
+    };
+    //当鼠标移动时
+    canvas.onmousemove = function(e){
+        if(dragging){
+            e.preventDefault();
+            loc = windowToCanvas(e.clientX, e.clientY);
+            //context.restore();
+            restoreDrawingSurface();
+            drawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
+            message.innerHTML = "x=" +loc.x + " ,y=" + loc.y;
+
+        }
+    }
+
+    //鼠标右键
+    document.oncontextmenu = function(e){
+        if(event.button==2){
+            e.preventDefault();
+            // 在这里定义事件的函数
+            loc = windowToCanvas(e.clientX, e.clientY);
+            //saveDrawingSurface();
+            restoreDrawingSurface();
+           //context.restore();
+            // updateRubberband(loc);
+            // 鼠标右键，拖动标记设为否
+            dragging = false;
+        }
+
+    };
+
+    // function init2() {
+    //     var div = document.getElementById("renderer2");
+    //     div.innerHTML = "";
+    //     layer = new Layer(div);
+    //     for(var i=0; i<5; i++) {
+    //         addPoint();
+    //     }
+    //     for(var i=0; i<5; i++) {
+    //         addCircle();
+    //     }
+    // }
+    //
+    // function addPoint() {
+    //     var vectors = [];
+    //     var point = new Point((Math.random()*400-200), (Math.random()*300-150));
+    //     vectors.push(new Vector(point));
+    //     layer.addVectors(vectors);
+    // }
+    //
+    // function addCircle() {
+    //     var vectors = [];
+    //     var circle = new Circle((Math.random()*400-200), (Math.random()*300-150), Math.random()*10 + 5);
+    //     var vector = new Vector(circle);
+    //     vector.style = circleStyle;
+    //     vectors.push(vector);
+    //     layer.addVectors(vectors);
+    // }
+    //
+    // function zoomin() {
+    //     var zoom = layer.zoom + 20;
+    //     layer.moveTo(zoom, layer.center);
+    // }
+    //
+    // function zoomout() {
+    //     var zoom = layer.zoom - 20;
+    //     layer.moveTo(zoom, layer.center);
+    // }
+</script>
+</html>

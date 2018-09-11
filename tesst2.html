@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="canvas.css" type="text/css" />
+</head>
+<body>
+<canvas id="canvas" width="600" height="600"></canvas>
+<div id="controls">
+    Stroke color:
+    <select id="strokeStyleSelect">
+        <option value="red">red</option>
+        <option value="green">green</option>
+        <option value="blue">blue</option>
+        <option value="orange">orange</option>
+    </select>
+    Guidewires:
+    <input type="checkbox" name="guidewireCheckbox" id="guidewireCheckbox" value=""  checked="checked"/>
+    正交：
+    <input type="checkbox" name="zhengjiao" id="zhengjiao" value=""  checked="checked"/>
+    <input type="button" name="edit" id="edit" value="edit" />
+    <input type="button" name="eraseAllButton" id="eraseAllButton" value="Erase all" />
+    <input type="button" name="wall" id="wall" value="wall" />
+    <input type="button" name="room" id="room" value="room" />
+    <p style="color: red;" id="message"></p>
+</div>
+<div>
+
+    <input type="text" value="" id="box" style="width:30px;border:2px solid groove;position:absolute;left:100px;top:100px;opacity:.5"
+           onkeypress="getKey();"/>
+    <input type="text" value="" id="box1" style="width:30px;border:2px solid groove;position:absolute;left:250px;top:100px;opacity:.5"
+           onkeypress="getwidth();"/>
+    <input type="text" value="" id="box2" style="width:30px;border:2px solid groove;position:absolute;left:400px;top:100px;opacity:.5"
+           onkeypress="getheight();"/>
+</div>
+
+</body>
+<script src="tesst.js" type="text/javascript"></script>
+<script src="room.js" type="text/javascript"></script>
+<script src="input.js" type="text/javascript"></script>
+<script src="wall.js" type="text/javascript"></script>
+<script src="canvas.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+</script>
+</html>

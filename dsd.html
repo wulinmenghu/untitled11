@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dsd</title>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+</body>
+<script type="text/javascript">
+    // var CANVAS_WIDTH=1024;
+    // var CANVAS_HEIGHT=768;
+    // var GRID_WIDTH=100;
+    // var GRID_HEIGHT=100;
+    //
+    // drawGrid(CANVAS_WIDTH,CANVAS_HEIGHT,GRID_WIDTH,GRID_HEIGHT);
+    // //绘制网格
+    // function drawGrid(CANVAS_WIDTH,CANVAS_HEIGHT,GRID_WIDTH,GRID_HEIGHT){
+    //     var rows=parseInt(CANVAS_WIDTH/GRID_WIDTH);
+    //     var cols=parseInt(CANVAS_HEIGHT/GRID_HEIGHT);
+    //     for(var i=0;i<rows;++i)
+    //     {
+    //         for(var j=0;j<cols;++j)
+    //         {
+    //             drawRect(i,j,GRID_WIDTH,GRID_HEIGHT);
+    //             if(i==0||j==0)
+    //             {
+    //                 drawText(i,j,GRID_WIDTH,GRID_HEIGHT); //增加坐标
+    //             }
+    //         }
+    //     }
+    // }
+
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    window.onload = function(){
+
+
+
+        function  drawGrid(stepX, stepY, lineWidth, color){
+            context.save();
+            context.lineWidth = lineWidth;
+            context.strokeStyle = color;
+            for(var i = stepY + 0.5; i < context.canvas.height; i += stepY){
+                context.beginPath();
+                context.moveTo(0, i);
+                context.lineTo(context.canvas.width, i);
+                context.stroke();
+            }
+
+
+            for(var i = stepX + 0.5; i < context.canvas.width; i += stepX){
+                context.beginPath();
+                context.moveTo(i, 0);
+                context.lineTo(i, context.canvas.height);
+                context.stroke();
+            }
+
+
+            context.restore();
+        }
+
+        drawGrid(10, 10, 1, 'gray');
+    };
+
+
+</script>
+</html>

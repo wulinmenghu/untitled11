@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hard</title>
+    <style type="text/css">
+        body {
+            background: #eeeeee;
+        }
+        #controls {
+            position: absolute;
+            left: 25px;
+            top: 25px;
+        }
+        #canvas {
+            background: #ffffff;
+            cursor: pointer;
+            margin-left: 10px;
+            margin-top: 10px;
+            -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            -moz-box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+            -box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+        }
+    </style>
+
+
+
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+<div id="controls">
+    Stroke color:
+    <select id="strokeStyleSelect">
+        <option value="red">red</option>
+        <option value="green">green</option>
+        <option value="blue">blue</option>
+        <option value="orange">orange</option>
+    </select>
+
+    Guidewires:
+    <input type="checkbox" name="guidewireCheckbox" id="guidewireCheckbox" value=""  checked="checked"/>
+    <input type="button" name="eraseAllButton" id="eraseAllButton" value="Erase all" />
+    <p style="color: red;" id="message"></p>
+</div>
+
+</body>
+<script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var eraseAllButton = document.getElementById("eraseAllButton");
+    var strokeStyleSelect = document.getElementById("strokeStyleSelect");
+    var guidewireCheckbox = document.getElementById("guidewireCheckbox");
+    var message = document.getElementById("message");
+
+    var drawingSurfacsImageData = null;
+    var mousedown = {};
+    var rubberbandRect = {};
+    var dragging = false;
+    var guidewires = guidewireCheckbox.checked;
+    var loc=null;
+    drawHorizontLine(0);
+    drawVerticalLine(0);
+    //获取实际的鼠标在canvas的位置
+    function windowToCanvas(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x : x - bbox.left * (canvas.width / bbox.width),
+            y : y - bbox.top * (canvas.height / bbox.width)
+        };
+    }
+    //保存当前的canvas上的数据
+    function saveDrawingSurface() {
+        drawingSurfacsImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+    //恢复canvas的数据，主要用来显示最新的线段，擦除原来的线段
+    function restoreDrawingSurface() {
+        context.putImageData(drawingSurfacsImageData,
+            0, 0, 0, 0, canvas.width, canvas.height
+        );
+    }
+
+    //应该是计算需要偏移的量???不懂他要这个干嘛
+    function updateRubberbandRectangle(loc) {
+
+        rubberbandRect.width = Math.abs(loc.x - mousedown.x);
+        rubberbandRect.height = Math.abs(loc.y - mousedown.y);
+        if(loc.x > mousedown.x) {
+            rubberbandRect.left = mousedown.x;
+        } else {
+            rubberbandRect.left = loc.x;
+        }
+        if(loc.y > mousedown.y) {
+            rubberbandRect.top = mousedown.y;
+        } else {
+            rubberbandRect.top = loc.y;
+        }
+
+        message.innerHTML = "mousedown.x="+mousedown.x+",mousedown.y="+mousedown.y+",loc.x="+loc.x+",loc.y="+loc.y;
+    }
+    //更新
+    function  updateRubberband(loc) {
+        //此处在《HTML5 canvas核心技术——图形、动画与游戏开发》一书中
+        //updateRubberbandRectangle方法是没有注释的，但是我不懂要这个
+        //方法有什么作用，注释之后也不影响，话说我也不用话什么矩形哇
+        //有知道这个方法在这里是做什么的同学在下方评论一下告知哈
+        //updateRubberbandRectangle(loc);
+        drawRubberbandShape(loc);
+    }
+    //画最新的线条
+    function drawRubberbandShape(loc) {
+        context.beginPath();
+        context.moveTo(mousedown.x, mousedown.y);
+        context.lineTo(loc.x, loc.y);
+        context.stroke();
+    }
+    //画横线，在y坐标上
+    function drawHorizontLine(y) {
+        context.beginPath();
+        context.moveTo(0, y+0.5);
+        context.lineTo(canvas.width, y+0.5);
+        context.stroke();
+    }
+    //画竖线
+    function drawVerticalLine(x) {
+        context.beginPath();
+        context.moveTo(x+0.5, 0);
+        context.lineTo(x+0.5,canvas.height);
+        context.stroke();
+    }
+    function drawGuidewires(x, y) {
+        context.save();
+        context.strokeStyle = "rgba(0,0,230, 0.4)";
+        context.lineWidth = 0.5;
+        drawHorizontLine(y);
+        drawVerticalLine(x);
+        context.restore();
+    }
+
+
+    //当按下鼠标时
+    canvas.onmousedown = function(e) {
+        loc = windowToCanvas(e.clientX, e.clientY);
+
+        e.preventDefault();
+        saveDrawingSurface();
+        mousedown.x = loc.x;
+        mousedown.y = loc.y;
+        dragging = true;
+
+    };
+
+    //当鼠标移动时
+    canvas.onmousemove = function(e){
+
+
+        e.preventDefault();
+        loc = windowToCanvas(e.clientX, e.clientY);
+
+        restoreDrawingSurface();
+        updateRubberband(loc);
+
+        //如果选中的加入辅助线
+        //这里的辅助线应该只有在水平或是垂直的地方才出现的
+
+        if(guidewires) {
+            if(loc.x ==  mousedown.x){
+                drawGuidewires(loc.x, loc.y);
+            }
+            else if(loc.y ==  mousedown.y){
+                drawGuidewires(loc.x, loc.y);
+            }
+        }
+
+        var loc = windowToCanvas(e.clientX, e.clientY);
+        message.innerHTML = "x=" +loc.x + " ,y=" + loc.y;
+
+    };
+
+    // //当鼠标抬起时
+    // canvas.onmouseup = function(e) {
+    //     loc = windowToCanvas(e.clientX, e.clientY);
+    //     restoreDrawingSurface();
+    //     updateRubberband(loc);
+    //     //鼠标抬起，拖动标记设为否
+    //     dragging = false;
+    // };
+
+
+    //定义鼠标右键事件
+    document.oncontextmenu = function(e){
+        //这一步是为了阻止右击时系统默认的弹出框
+        e.preventDefault();
+        //在这里定义事件的函数
+        loc = windowToCanvas(e.clientX, e.clientY);
+        restoreDrawingSurface();
+        updateRubberband(loc);
+        //鼠标右键，拖动标记设为否
+        dragging = false;
+    };
+    // eraseAllButton.onclick = function(e){
+    //     context.clearRect(0, 0, canvas.width, canvas.height);
+    //     saveDrawingSurface();
+    // };
+    // strokeStyleSelect.onchange = function(e){
+    //     context.strokeStyle = strokeStyleSelect.value;
+    // };
+    // guidewireCheckbox.onchange = function(e){
+    //     guidewires = guidewireCheckbox.checked;
+    // };
+    context.strokeStyle = strokeStyleSelect.value;
+
+    function getLocation(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x: (x - bbox.left) * (canvas.width / bbox.width),
+            y: (y - bbox.top) * (canvas.height / bbox.height)
+
+            /*
+             * 此处不用下面两行是为了防止使用CSS和JS改变了canvas的高宽之后是表面积拉大而实际
+             * 显示像素不变而造成的坐标获取不准的情况
+            x: (x - bbox.left),
+            y: (y - bbox.top)
+            */
+        };
+    }
+    function drawHorizontalLine(y) {
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(canvas.width, y);
+        context.stroke();
+        context.closePath();
+    }
+    function drawVerticalLine(x) {
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, canvas.height);
+        context.stroke();
+        context.closePath();
+    }
+
+
+    //点击时弹出输入尺寸对话框
+    function setpoint(){
+        var x;
+        var person=prompt("请输入坐标",+loc.x+","+loc.y);
+        if (person!=null && person!=""){
+            x="你好 " + person + "! 今天感觉如何?";
+            document.getElementById("demo").innerHTML=x;
+        }
+    }
+
+
+</script>
+
+</html>

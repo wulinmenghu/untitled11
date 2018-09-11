@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导入图片</title>
+</head>
+<body>
+<canvas id="canvas" width="600" height="800"></canvas>
+</body>
+<script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    var loc=null;
+    // var img= new Image();
+    // img.src = "2.jpg";
+    // img.onload = function(){
+    //     context.drawImage(img, 0, 0);
+    // }
+    //输入坐标是e.clientX，e.clientY，得到返回值是canvas的位置坐标
+    function windowToCanvas(x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x : x - bbox.left * (canvas.width / bbox.width),
+            y : y - bbox.top * (canvas.height / bbox.width)
+        };
+    }
+    //画横线，在y坐标上
+    function drawHorizontLine(y) {
+        context.beginPath();
+        context.moveTo(0, y+0.5);
+        context.lineTo(canvas.width, y+0.5);
+        context.stroke();
+    }
+    //画竖线
+    function drawVerticalLine(x) {
+        context.beginPath();
+        context.moveTo(x+0.5, 0);
+        context.lineTo(x+0.5,canvas.height);
+        context.stroke();
+    }
+    function drawGuidewires(x, y) {
+        context.save();
+        context.strokeStyle = "rgba(0,0,230, 0.4)";
+        context.lineWidth = 0.5;
+        drawHorizontLine(y);
+        drawVerticalLine(x);
+        context.restore();
+    }
+    //恢复canvas的数据，主要用来显示最新的线段，擦除原来的线段
+    function restoreDrawingSurface() {
+        context.putImageData(drawingSurfacsImageData,
+            0, 0, 0, 0, canvas.width, canvas.height
+        );
+    }
+    //当鼠标移动时
+    canvas.onmousemove = function(e){
+
+        //判断当前是否用户在拖动
+        if(dragging) {
+            e.preventDefault();
+            loc = windowToCanvas(e.clientX, e.clientY);
+
+            restoreDrawingSurface();
+
+            drawGuidewires(loc.x, loc.y);
+
+        }
+
+
+
+        var loc = windowToCanvas(e.clientX, e.clientY);
+        message.innerHTML = "x=" +loc.x + " ,y=" + loc.y;
+
+
+    };
+</script>
+</html>

@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src = "./libs/CanvasSketch.js"></script>
+    <script type = "text/javascript">
+		var timer;
+		function init() {            
+			var div = document.getElementById("renderer");
+			//博客园在每个空div里面会加一个空格，这里要把他清除掉，
+            // 如果自己写代码这句话没有用。
+			div.innerHTML = "";
+			if(timer) {clearInterval(timer);};
+			//创建一个图层类
+			var layer = new Layer(div);
+			var vectors = [];
+			
+			var differ = 1;
+
+            //声明一个矢量图形数组
+			for(var i = 0; i<1000; i++) {
+			    //创建1000个x坐标随机在（-200,200）和y坐标随机在（-150,150）之间的点，
+				var point = new Point((Math.random()*400-200), (Math.random()*300-150));
+                // 并添加到图层当中
+				vectors.push(new Vector(point));
+			}
+			//调用layer.addVectors来为我们的图层添加矢量元素
+			layer.addVectors(vectors);
+
+            //setInterval() 方法可按照指定的周期（以毫秒计）来调用函数或计算表达式
+            // 直到 clearInterval() 被调用或窗口被关闭
+            //每30毫秒重绘一次
+			timer = setInterval(function(){
+				layer.zoom -= differ; 
+				layer.renderer.redraw();
+				if(layer.zoom < 50){
+					differ = -1;
+				}
+				if(layer.zoom > 200) {
+					differ = 1;
+				}
+			},30);
+		}        
+    </script>
+</head>
+<body>
+    <div style="width:400px; height:300px; border:1px solid black" id="renderer">&nbsp;</div>
+    <p onclick="init()">运行示例</p>
+</body>
+</html>

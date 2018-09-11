@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试inrectangle函数</title>
+    <link rel="stylesheet" href="canvas.css" type="text/css" />
+</head>
+<body>
+<canvas id="canvas" width="600" height="600"></canvas>
+<input type="button" onclick="display_alert()"
+       value="Display alert box" />
+</body>
+<script>
+  var canvas = document.querySelector( 'canvas' );
+  var context = canvas.getContext( '2d' );
+  //判断是否在矩形框内
+  function inrectangle(x,y,x1,y1,x2,y2,r) {
+
+
+    if(x1==x2){
+
+      if(y1<=y && y<=y2 && (x1-r)<=x && x<=(x1+r)){
+        return true;
+      }else if(y2<=y && y<=y1 && (x1-r)<=x && x<=(x1+r)){
+        return true;
+      }else {
+        return false;
+      }
+
+    }else if(y1==y2){
+      if(x1<=y && y<=x2 && (y1-r)<=y && y<=(y1+r)){
+        return true;
+      }else if(x2<=y && y<=x1 && (y1-r)<=y && y<=(y1+r)){
+        return true;
+      }else {
+        return false;
+      }
+    }else{
+      var k=(y2 - y1)/(x2 - x1);
+      var tan = (x2 - x1) / (y2 - y1);
+      var cos = Math.sqrt(1/(1 + tan * tan));
+      var sin = tan * cos;
+      x1=x1 + r * cos;
+      y1=y1 - r * sin;
+      x2=x2 + r * cos;
+      y2=y2 - r * sin;
+      var x3=x1 - 2 * r * cos;
+      var y3=y1 + 2 * r * sin;
+      // var x4=x2 - 2 * r * cos;
+      // var y4=y2 + 2 * r * sin;
+
+
+
+      if((k*(x-x1)+y1)<=y && y<=(k*(x-x3)+y3) && (y1-(x-x1)/k)<=y && y<=(y2-(x-x2)/k)){
+        return true;
+      }else if((k*(x-x3)+y3)<=y && y<=(k*(x-x1)+y1) && (y1-(x-x1)/k)<=y && y<=(y2-(x-x2)/k)){
+        return true;
+      }else if((k*(x-x3)+y3)<=y && y<=(k*(x-x1)+y1) && (y2-(x-x2)/k)<=y && y<=(y1-(x-x1)/k)){
+        return true;
+      }else if((k*(x-x3)+y3)<=y && y<=(k*(x-x1)+y1) && (y1-(x-x1)/k)<=y && y<=(y2-(x-x2)/k)){
+        return true;
+      }else {
+        return false;
+      }
+    }
+  }
+
+  // c=inrectangle(50,50,10,10,100,100,5);
+  // function display_alert()
+  // {
+  //   alert(c)
+  // }
+  function drawRubberbandShape(x1,y1,x2,y2,r) {
+    context.strokeStyle = 'red';
+
+    //context.scale(2,2);
+    //设置线条颜色是红色，圆圈内颜色蓝色
+    context.beginPath();
+    context.arc(x1, y1, r, 0, 2 * Math.PI, false);
+    context.closePath();
+    context.stroke();
+    context.fillStyle="blue";
+    context.fill();
+
+
+    context.beginPath();
+    context.arc(x2, y2, r, 0, 2 * Math.PI, false);
+    context.closePath();
+    context.stroke();
+    context.fillStyle="blue";
+    context.fill();
+
+    if (y2 == y1) {
+      context.beginPath();
+      context.moveTo(x1, y1 - r);
+      context.lineTo(x2, y2 - r);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(x1, y1 + r);
+      context.lineTo(x2, y2 + r);
+      context.stroke();
+    } else {
+      var tan = (x2 - x1) / (y2 - y1);
+      var cos = Math.sqrt(1/(1 + tan * tan));
+      var sin = tan * cos;
+      //画出切线
+      context.beginPath();
+      context.moveTo(x1 + r * cos, y1 - r * sin);
+      context.lineTo(x2 + r * cos, y2 - r * sin);
+      context.stroke();
+
+
+      context.beginPath();
+      context.moveTo(x1 - r * cos, y1 + r * sin);
+      context.lineTo(x2 - r * cos, y2 + r * sin);
+      context.stroke();
+
+
+      context.fill();
+      context.fillStyle="blue";
+      //context.strokeStyle="blue";
+
+    }
+    var l=parseInt(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))).toString();
+    context.fillText(l,(x1+x2)/2,(y1+y2)/2);
+    context.fillStyle="black";
+    context.fill();
+
+  }
+  drawRubberbandShape(100,100,500,500,5);
+canvas.onmousedown=function (e) {
+  loc = windowToCanvas(e.clientX, e.clientY);
+  if(inrectangle(loc.x,loc.y,100,100,500,500,5)){
+    alert("1");
+  }else{
+    alert("2");
+  }
+}
+
+  //如果点击点在矩形内部，将其定位在中间的位置
+  function incircle(x,y,x1,y1,x2,y2){
+    //var n=((x2-x1)*(x2-x1)*x+(y2-y1)(y2*x1-x2*y1)+(y2-y1)(x2-x1)*y)/((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1))
+
+    if(x1==x2){
+      return{
+        x:x1,
+        y:y
+      }
+    }else{
+      var k=(y2 - y1)/(x2 - x1);
+      x=(x+k*k*x1+k*y-k*y1)/(1+k*k);
+      y=k*(x-x1)+y1;
+      return{
+        x:x,
+        y:y
+      }
+    }
+  }
+  function windowToCanvas(x, y) {
+    var bbox = canvas.getBoundingClientRect();
+    return {
+      x : x - bbox.left * (canvas.width / bbox.width),
+      y : y - bbox.top * (canvas.height / bbox.width)
+    };
+  }
+
+</script>
+</html>

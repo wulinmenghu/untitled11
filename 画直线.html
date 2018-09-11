@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>画出圆柱体</title>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+</body>
+<script type="text/javascript">
+  var canvas = document.getElementById("canvas");
+  var context = canvas.getContext("2d");
+  var message = document.getElementById("message");
+  var mousedown = {};
+  var loc=null;
+  var dragging = false;
+  var drawingSurfacsImageData = null;
+  var list = [];
+  var lyc=new LYC();
+
+  function LYC(x,y){
+    this.x=x;
+    this.y=y;
+
+  }
+
+  //输入坐标是e.clientX，e.clientY，得到返回值是canvas的位置坐标
+  function windowToCanvas(x, y) {
+    var bbox = canvas.getBoundingClientRect();
+    return {
+      x : x - bbox.left * (canvas.width / bbox.width),
+      y : y - bbox.top * (canvas.height / bbox.width)
+    };
+  }
+
+  //复制保存当前全部的canvas上的数据
+  function saveDrawingSurface() {
+    drawingSurfacsImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  }
+  //恢复canvas的数据，主要用来显示最新的线段，擦除原来的线段
+  function restoreDrawingSurface() {
+    context.putImageData(drawingSurfacsImageData,
+        0, 0, 0, 0, canvas.width, canvas.height
+    );
+  }
+
+  function drawRubberbandShape(x1,y1,x2,y2,r) {
+
+    context.beginPath();
+    context.arc(x1, y1,r,0,2*Math.PI, false);
+    context.closePath();
+    context.stroke();
+    context.strokeStyle = 'maroon';
+
+    context.beginPath();
+    context.arc(x2, y2,r,0,2*Math.PI, false);
+    context.closePath();
+    context.stroke();
+
+
+    if(y2==y1){
+      context.beginPath();
+      context.moveTo(x1,y1-r);
+      context.lineTo(x2,y2-r);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(x1,y1+r);
+      context.lineTo(x2,y2+r);
+      context.stroke();
+    }else{
+      var tan=(x2-x1)/(y2-y1);
+      var cos=Math.sqrt(1/(1+tan*tan));
+      var sin=tan*cos;
+
+      //画出切线
+      context.beginPath();
+      context.moveTo(x1+r*cos,y1-r*sin);
+      context.lineTo(x2+r*cos,y2-r*sin);
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(x1-r*cos,y1+r*sin);
+      context.lineTo(x2-r*cos,y2+r*sin);
+      context.stroke();
+
+      context.font='10 px Verdana';
+      var l=parseInt(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))).toString();
+      context.fillText(l,(x1+x2)/2,(y1+y2)/2);
+    }
+
+  }
+  drawRubberbandShape(200,200,50,50,50);
+
+  context.strokeStyle = 'red';
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+
+  context.strokeStyle = 'rgba(255,255,255,1)';
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+  context.beginPath();
+  context.arc(300, 300,50,0,2*Math.PI, false);
+  context.closePath();
+  context.stroke();
+
+
+</script>
+</html>

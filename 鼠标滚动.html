@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>鼠标滚动缩放</title>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+</body>
+<script src="/jquery.mousewheel.js"  type="text/javascript">
+//平移
+$(canvas).bind('mousemove', function ()
+{
+	var scale = canvasConstructor.scale;
+	var x = event.clientX;
+	var y = event.clientY;
+	if (canDrag)
+	{
+		var len = canvasDatasets.figures.length;
+		for (var i = 0; i < len; i++)
+		{
+			canvasDatasets.figures[i].setPosition(x - lastPosition.x, y - lastPosition.y);
+		}
+		_drawBoard.reDraw();
+		lastPosition.x = x;
+		lastPosition.y = y;
+		return;
+	}
+}
+//缩放
+$(canvas).mousewheel(function (event, intDelta)
+{
+    if (enableMousewheel)
+    {
+        if (isWheeling)
+        {
+        	isWheeling = false;
+        	var edgeZoomScale = 0;
+        	var enable = false;
+        	if (intDelta > 0)
+        	{
+        		if (_defaultZoomScale == _defaultMaxScale)
+        		{
+        			isWheeling = true;
+        			return;
+        		}
+        		else
+        		{
+        			edgeZoomScale = _defaultZoomScale + _defaultZoomIncrement;
+        			if (edgeZoomScale > _defaultMaxScale)
+        			{
+        				edgeZoomScale = _defaultMaxScale;
+        			}
+        			enable = true;
+        		}
+        	}
+        	else if (intDelta <= 0)
+        	{
+        		if (_defaultZoomScale == _defaultMinScale)
+        		{
+        			isWheeling = true;
+        			return;
+        		}
+        		else
+        		{
+        			edgeZoomScale = _defaultZoomScale - _defaultZoomIncrement;
+        			if (edgeZoomScale < _defaultMinScale)
+        			{
+        				edgeZoomScale = _defaultMinScale;
+        			}
+        			enable = true;
+        		}
+        	}
+        	if (enable)
+        	{
+        		var point = new Point(event.clientX, event.clientY);
+        		var ratio = edgeZoomScale / _defaultZoomScale;
+        		_defaultZoomScale = edgeZoomScale;
+        		_drawBoard.zoomRefresh(ratio, point);
+        		parent.setZoomText(_defaultZoomScale);
+        	}
+        	isWheeling = true;
+        }
+    }
+});
+
+</script>
+</html>

@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>网格绘制</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+</head>
+<body>
+
+<canvas></canvas>
+</body>
+<script>
+  var canvas = document.getElementsByTagName('canvas')[0];
+  canvas.width = 400;
+  canvas.height = 280;
+  if(canvas.getContext){
+    var ctx = canvas.getContext("2d"),
+        width = canvas.width,
+        height = canvas.height;
+    ctx.lineWidth = 2;
+    //先画横线
+    for( var i = 1; i * 50 < height; i++ ){
+      ctx.strokeStyle = 'gray';
+      ctx.beginPath();
+      ctx.moveTo(0,i * 50);
+      ctx.lineTo(width,i* 50);
+      ctx.stroke();
+    }
+    //再画纵线
+    for( var j = 1; j * 50 < width; j++ ){
+      ctx.strokeStyle = 'gray';
+      ctx.beginPath();
+      ctx.moveTo(j * 50, 0);
+      ctx.lineTo(j * 50, height);
+      ctx.stroke();
+    }
+
+  }
+</script>
+</html>

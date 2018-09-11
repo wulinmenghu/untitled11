@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>面向对象</title>
+</head>
+<body>
+<canvas id="canvas" width="600" height="400"></canvas>
+<pre id="myText" style="word-wrap: break-word; white-space: pre-wrap; white-space: -moz-pre-wrap">
+</pre>
+</body>
+<script type="text/javascript">
+    var url = "/public/aaa/cmd/123.txt";
+    $.ajax({
+        url: url,
+        async: false,
+        success: function (data) {
+            console.log(data);
+            $('#myText').html(data)
+        }
+    })
+
+    window.onload=function(){
+        var canvas=document.getElementById('canvas');
+        canvas.width=800;
+        canvas.height=800;
+        var context=canvas.getContext('2d');
+        context.font="bold 20px Arial"
+        context.fillStyle="#058"
+        context.fillText("Hello canvas！",40,100)
+    }
+</script>
+
+</html>

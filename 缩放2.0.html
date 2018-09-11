@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>变形</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var canvas = document.getElementById("myCanvas");
+            var context = canvas.getContext("2d");
+            context.save();  //先保存下绘图状态
+            context.translate(150, 150);  //进行位移操作
+            context.scale(2, 2);  //将绘制元素放大2倍
+            context.fillRect(0, 0, 100, 100);
+            context.restore();  //恢复绘图状态
+            context.fillRect(0, 0, 100, 100);  //此时，绘制的矩形既没位移，又没放大！
+        }
+    </script>
+</head>
+<body>
+<canvas id="myCanvas" width="1000" height="1000">
+    您的浏览器暂不支持画布！
+</canvas>
+</body>
+</html>
