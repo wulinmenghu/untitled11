@@ -62,7 +62,7 @@ function getKey() {
         }
       }
 
-      loc=QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc);
+      loc=QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
       if(wall){
         var circle = new Circle(mousedown.x, mousedown.y,loc.x,loc.y, 5, "blue");
         // 把它保存在数组中

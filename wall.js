@@ -52,7 +52,7 @@ function drawRubberbandShape(x1,y1,x2,y2,r) {
     //context.strokeStyle="blue";
 
   }
-  var l=parseInt(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))).toString();
+  var l=parseInt(Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))).toFixed(0).toString();
   context.fillText(l,(x1+x2)/2,(y1+y2)/2);
   context.fillStyle="black";
   context.fill();
@@ -62,17 +62,17 @@ function drawRubberbandShape(x1,y1,x2,y2,r) {
 
 //画出墙体正交线条 不可连笔(要调用墙体正交方法)
 //返回结束点的坐标
-function QTZJdrawRubberbandShape(x,y,loc) {
-  if(Math.abs(loc.x-x)>Math.abs(loc.y-y)){
+function QTZJdrawRubberbandShape(x1,y1,x2,y2,r) {
+  if(Math.abs(x2-x1)>Math.abs(y2-y1)){
     //先画横线再画直线,从mx,my到lx,my
     // context.beginPath();
     // context.moveTo(mousedown.x, mousedown.y);
     // context.lineTo(loc.x, mousedown.y);
     // context.stroke();
-    drawRubberbandShape(x,y,loc.x,y,5);
+    drawRubberbandShape(x1,y1,x2,y1,r);
     return{
-      x:loc.x,
-      y:y
+      x:x2,
+      y:y1
     }
     // context.beginPath();
     // context.moveTo(loc.x, mousedown.y);
@@ -85,10 +85,10 @@ function QTZJdrawRubberbandShape(x,y,loc) {
     // context.lineTo(mousedown.x, loc.y);
     // context.stroke();
 
-    drawRubberbandShape(x,y,x,loc.y,5);
+    drawRubberbandShape(x1,y1,x1,y2,r);
     return{
-      x:x,
-      y:loc.y
+      x:x1,
+      y:y2
     }
     // context.beginPath();
     // context.moveTo(mousedown.x, loc.y);
@@ -193,14 +193,29 @@ function Circle(x1, y1,x2,y2, radius, color) {
 function redrawCircle(i) {
   //可以先清除画布，再重绘除了所画的图形i之外的其他对象图形，
   context.clearRect(0, 0, canvas.width, canvas.height);
-  // for (var j = 0; j <= rooms.length-1; j++) {
-  //   ZJdrawRubberbandShape(rooms[j].x1, rooms[j].y1, rooms[j].x2, rooms[j].y2, rooms[j].radius);
-  // }
+  for (var j = 0; j <= rooms.length-1; j++) {
+    ZJdrawRubberbandShape(rooms[j].x1, rooms[j].y1, rooms[j].x2, rooms[j].y2,
+        rooms[j].x3, rooms[j].y3, rooms[j].x4, rooms[j].y4,rooms[j].radius,rooms[j].name);
+  }
 
   for (var j = 0; j < i; j++) {
     drawRubberbandShape(circles[j].x1, circles[j].y1, circles[j].x2, circles[j].y2, circles[j].radius);
   }
   for (var m = (i + 1); m <= circles.length - 1; m++) {
     drawRubberbandShape(circles[m].x1, circles[m].y1, circles[m].x2, circles[m].y2, circles[m].radius);
+  }
+}
+
+
+function redrawWall(a) {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  for(var i=0;i<=a[1];i++){
+    drawRubberbandShape(circles[j].x1, circles[j].y1, circles[j].x2, circles[j].y2, circles[j].radius);
+  }
+
+
+
+  for(var i=a[a.length-1];i<=circles.length-1;i++){
+    drawRubberbandShape(circles[j].x1, circles[j].y1, circles[j].x2, circles[j].y2, circles[j].radius);
   }
 }

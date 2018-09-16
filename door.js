@@ -1,10 +1,11 @@
 //定义门类别
-function Door(x, y, width, radius) {
+function Door(x, y, width,color) {
   this.x = x;
   this.y = y;
 
-  this.radius = radius;
+
   this.width = width;
+  this.color=color;
   this.isSelected = false;
 }
 
@@ -67,28 +68,50 @@ function inDoor(x,y) {
 // context.lineTo(400,200);
 // context.stroke();
 //画出门
-function drawDoor(x,y,x1,y1,x2,y2,width,j) {
+function drawSingleDoor(x,y,x1,y1,x2,y2,width) {
+  context.beginPath();
+  context.arc(x,y,width,Math.atan((y2 - y1)/(x2 - x1))+0.5*Math.PI,
+      Math.atan((y2 - y1)/(x2 - x1)),true);
+  context.lineTo(x,y);
+  context.closePath();
+  context.stroke();
+  //drawRubberbandShape( 10, 10, 20, 20,5 );
+  // if(j==1){
+  //   context.beginPath();
+  //   context.arc(x,y1,width,0,1.5*Math.PI,true);
+  //   context.moveTo(x,y1-width);
+  //   context.lineTo(x,y1);
+  //   context.lineTo(x+width,y1);
+  //   context.stroke();
+  // }else if(j==2){
+  //   context.beginPath();
+  //   context.arc(x1,y,width,0.5*Math.PI,0,true);
+  //   context.stroke();
+  // }else if(j==3){
+  //   context.beginPath();
+  //   context.arc(x,y1,width,Math.PI,0.5*Math.PI,true);
+  //   context.stroke();
+  // }else if(j==4){
+  //   context.beginPath();
+  //   context.arc(x1,y,width,1.5*Math.PI,Math.PI,true);
+  //   context.stroke();
+  // }
+}
 
-  if(j==1){
-    context.beginPath();
-    context.arc(x,y1,width,0,1.5*Math.PI,true);
-    context.moveTo(x,y1-width);
-    context.lineTo(x,y1);
-    context.lineTo(x+width,y1);
-    context.stroke();
-  }else if(j==2){
-    context.beginPath();
-    context.arc(x1,y,width,0.5*Math.PI,0,true);
-    context.stroke();
-  }else if(j==3){
-    context.beginPath();
-    context.arc(x,y1,width,Math.PI,0.5*Math.PI,true);
-    context.stroke();
-  }else if(j==4){
-    context.beginPath();
-    context.arc(x1,y,width,1.5*Math.PI,Math.PI,true);
-    context.stroke();
-  }
+function drawDoubleDoor(x,y,x1,y1,x2,y2,width,){
+  context.beginPath();
+  context.arc(x,y,width,Math.atan((y2 - y1)/(x2 - x1)),
+      Math.atan((y2 - y1)/(x2 - x1))+0.5*Math.PI,false);
+  context.lineTo(x,y);
+  context.closePath();
+  context.stroke();
+}
 
-
+function drawMoveDoor(x,y,x1,y1,x2,y2,width,){
+  context.beginPath();
+  context.arc(x,y,width,Math.atan((y2 - y1)/(x2 - x1))+0.5*Math.PI,
+      Math.atan((y2 - y1)/(x2 - x1)),true);
+  context.lineTo(x,y);
+  context.closePath();
+  context.stroke();
 }

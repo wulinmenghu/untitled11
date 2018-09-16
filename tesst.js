@@ -276,7 +276,7 @@ canvas.onmousemove = function(e){
     if(wall){
       if(zhengjiao){
         //把画出墙体的落点付给m2，设置为下一个点的起始位置
-        mousedown2 = QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc);
+        mousedown2 = QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
       }else{
         drawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
       }
@@ -286,7 +286,7 @@ canvas.onmousemove = function(e){
       // }
 
         if(zhengjiao){
-          mousedown2 = QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc);
+          mousedown2 = QTZJdrawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
         }else{
           drawRubberbandShape(mousedown.x,mousedown.y,loc.x,loc.y,5);
         }
